@@ -1,0 +1,12 @@
+---
+nginx_remove_default: false
+nginx_user: www-data
+nginx_sendfile: "off"
+
+mysql_root_username: root
+mysql_root_password: root
+
+vagrant_db_user: vagrant
+vagrant_db_pwd: vagrant
+
+server_root: /srv

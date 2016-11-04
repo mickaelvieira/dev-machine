@@ -1,0 +1,12 @@
+---
+- name: install nodejs
+  apt: name=nodejs state=present
+
+- name: symlink node and nodejs
+  file: src=/usr/bin/nodejs dest=/usr/local/bin/node state=link
+
+- name: install npm
+  apt: name=npm state=present
+
+- name: install build essential
+  apt: name=build-essential state=present

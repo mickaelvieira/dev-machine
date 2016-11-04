@@ -1,0 +1,15 @@
+---
+- name: install mariadb server
+  apt: name=mariadb-server state=present
+
+- name: install mariadb client
+  apt: name=mariadb-client state=present
+
+- name: install python MySQL
+  apt: pkg=python-mysqldb state=present
+
+- name: Copy .my.cnf file with root password credentials
+  template: src=roles/mariadb/templates/user.my.cnf.j2 dest=/root/.my.cnf owner=root group=root mode=0600
+
+- name: create vagrant database user
+  mysql_user: name={{ vagrant_db_user }} password={{ vagrant_db_user }} priv=*.*:ALL state=present

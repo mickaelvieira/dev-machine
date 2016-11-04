@@ -1,0 +1,7 @@
+composer_path: /usr/local/bin/composer
+
+signature_url: https://composer.github.io/installer.sig
+signature_path: /tmp/installer.sig
+
+installer_url: https://getcomposer.org/installer
+installer_path: /tmp/composer-setup.php

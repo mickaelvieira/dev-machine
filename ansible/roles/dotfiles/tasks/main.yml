@@ -1,0 +1,5 @@
+---
+- name: dotfiles repository
+  git: repo=https://github.com/mickaelvieira/dotfiles.git dest=/home/vagrant/dotfiles
+  become: true
+  become_user: vagrant

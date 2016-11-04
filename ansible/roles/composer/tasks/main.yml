@@ -1,0 +1,10 @@
+---
+- name: check composer
+  stat: path={{ composer_path }}
+  register: composer_info
+
+- include: install.yml
+  when: composer_info.stat.isreg is not defined
+
+- include: update.yml
+  when: composer_info.stat.isreg is defined

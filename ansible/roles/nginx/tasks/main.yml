@@ -1,0 +1,25 @@
+---
+- name: install nginx
+  apt: name=nginx state=present
+
+- name: create sites available directory
+  file: dest={{ sites_available }} state=directory
+
+- name: create sites enabled directory
+  file: dest={{ sites_enabled }} state=directory
+
+- name: add nginx configuration
+  template: src={{ templates_dir }}/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+
+- name: add php-fpm configuration
+  template: src={{ templates_dir }}/www.conf.j2 dest=/etc/php/7.0/fpm/pool.d/www.conf
+
+#- name: remove default vhost
+#  file: dest={{ sites_enabled }}/default state=absent
+#  when: nginx_remove_default
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: restart php-fpm
+  service: name=php7.0-fpm state=restarted

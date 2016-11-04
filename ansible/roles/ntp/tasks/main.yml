@@ -1,0 +1,9 @@
+---
+- name: set timezone
+  shell: timedatectl set-timezone UTC
+
+- name: install ntp
+  apt: name=ntp state=present
+
+- name: restart ntp
+  service: name=ntp state=restarted

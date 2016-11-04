@@ -1,0 +1,21 @@
+---
+- name: download installer signature
+  get_url: url={{ signature_url }} dest={{ signature_path }}
+
+- name: read installer signature
+  shell: cat {{ signature_path }}
+  register: signature
+
+- name: download installer
+  get_url: url={{ installer_url }} dest={{ installer_path }} checksum=sha384:{{ item }}
+  with_items: "{{ signature.stdout }}"
+  when: signature.stdout
+
+- name: build composer
+  shell: /usr/bin/php {{ installer_path }} --install-dir=/usr/local/bin/ --filename=composer
+
+- name: remove installer
+  file: dest={{ installer_path }} state=absent
+
+- name: remove signature
+  file: dest={{ signature_path }} state=absent

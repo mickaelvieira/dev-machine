@@ -1,0 +1,7 @@
+---
+- name: add hostname file
+  template: src={{ templates_dir }}/hostname.j2 dest=/etc/hostname
+
+- name: add hosts file
+  template: src={{ templates_dir }}/hosts.j2 dest=/etc/hosts
+

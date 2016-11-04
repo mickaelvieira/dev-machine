@@ -1,0 +1,24 @@
+---
+- name: install apache
+  apt: name=apache2 state=present
+
+- name: install apache php7
+  apt: name=libapache2-mod-php7.0 state=present
+
+- name: install apache itk
+  apt: name=libapache2-mpm-itk state=present
+
+#- name: disable apache default site
+#  file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
+
+- name: enable module rewrite
+  file: src=/etc/apache2/mods-available/rewrite.load dest=/etc/apache2/mods-enabled/rewrite.load state=link
+
+- name: enable module headers
+  file: src=/etc/apache2/mods-available/headers.load dest=/etc/apache2/mods-enabled/headers.load state=link
+
+- name: stop apache we use nginx
+  service: name=apache2 state=stopped
+
+#- name: reload apache
+#  service: name=apache2 state=restarted

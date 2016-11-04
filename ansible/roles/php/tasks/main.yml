@@ -1,0 +1,27 @@
+---
+- name: install PHP7
+  apt: name=php7.0 state=present
+
+- name: install PHP7-dev
+  apt: name=php7.0-dev state=present
+
+- name: install PHP7 mysql
+  apt: name=php7.0-mysql state=present
+
+- name: install PHP7 curl
+  apt: name=php7.0-curl state=present
+
+- name: install PHP7 mbstring
+  apt: name=php7.0-mbstring state=present
+
+- name: install PHP7 mycrypt
+  apt: name=php7.0-mcrypt state=present
+
+- name: install PHP7 sqlite3
+  apt: name=php7.0-sqlite3 state=present
+
+- name: install PHP7 gd
+  apt: name=php7.0-gd state=present
+
+- name: install PHP7 xdebug
+  apt: name=php-xdebug state=present
