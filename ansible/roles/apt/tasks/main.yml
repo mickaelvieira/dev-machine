@@ -1,0 +1,9 @@
+---
+- name: fetch yarn pub key
+  apt_key: url=http://dl.yarnpkg.com/debian/pubkey.gpg state=present
+
+- name: add yarn source list
+  template: src=roles/nodejs/templates/yarn.list.j2 dest=/etc/apt/sources.list.d/yarn.list
+
+- name: refresh apt cache
+  apt: update_cache=yes
