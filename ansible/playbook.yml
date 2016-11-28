@@ -2,13 +2,11 @@
   become: true
   become_method: sudo
   gather_facts: no
-  pre_tasks:
-    - name: refresh apt cache
-      apt: update_cache=yes
   roles:
     - system
     - apt
     - ntp
+    - ssl
     - php
     - composer
     - nginx
