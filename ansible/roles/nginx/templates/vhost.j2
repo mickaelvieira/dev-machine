@@ -1,40 +1,68 @@
-server {
 
+server {
     listen 80;
-    listen [::]:80;
+    server_name {{ host_name }};
+    server_name www.{{ host_name }};
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.{{ host_name }};
+    return 301 $scheme://{{ host_name }}$request_uri;
+}
+
+server {
+    listen 443 default_server ssl http2;
 
     root {{ document_root }};
 
     # Index files
     index index.php index.html;
 
-    server_name {{ host_name }}  www.{{ host_name }};
+    server_name {{ host_name }};
+
+    ssl on;
+    ssl_certificate /etc/ssl/dev-machine/dev-machine.pem;
+    ssl_certificate_key /etc/ssl/dev-machine/dev-machine.key;
 
     error_log /var/log/nginx/error.log;
     access_log /var/log/nginx/access.log;
 
-    rewrite ^/app\.php/?(.*)$ /$1 permanent;
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        access_log     off;
+        log_not_found  off;
+        expires        off;
+    }
+
+    location ~ /\. {
+        access_log     off;
+        log_not_found  off;
+        deny           all;
+    }
 
     location / {
-        index app.php;
-        try_files $uri @rewriteapp;
+        try_files $uri /index.php$is_args$args;
     }
 
-    location @rewriteapp {
-        rewrite ^(.*)$ /app.php/$1 last;
-    }
-
-    location ~ ^/(app|app_dev|config)\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
 
         fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+
         fastcgi_split_path_info  ^(.+\.php)(/.+)$;
 
-        include fastcgi_params;
-        fastcgi_param   DOCUMENT_ROOT $realpath_root;
-        fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param   PATH_INFO $fastcgi_path_info;
-        fastcgi_param   HTTPS off;
-        #fastcgi_intercept_errors on;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param HTTPS on;
+
+        # fastcgi_buffer_size 128k;
+        # fastcgi_buffers 256 16k;
+        # fastcgi_busy_buffers_size 256k;
+        # fastcgi_temp_file_write_size 256k;
+
+        internal;
     }
 
     location ~ \.php$ {

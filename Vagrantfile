@@ -9,9 +9,10 @@ Vagrant.configure("2") do |config|
 
     # config.vm.hostname = ""
 
-    config.vm.network :private_network, ip: "10.0.15.74"
+    config.vm.network :private_network, ip: "10.0.15.10"
 
-    config.vm.synced_folder "~/dev", "/srv/", :owner=> 'www-data', :group=>'www-data', :mount_options => ['dmode=775', 'fmode=664']
+    config.vm.synced_folder "~/dev", "/srv",
+      :owner => 'vagrant', :group => 'vagrant', :mount_options => ['dmode=777', 'fmode=777']
     # config.vm.synced_folder "~/dev", "/srv/", type: "nfs"
 
     config.vm.provider "virtualbox" do |vb|

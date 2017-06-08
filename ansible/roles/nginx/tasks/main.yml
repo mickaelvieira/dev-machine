@@ -14,9 +14,15 @@
 - name: add php-fpm configuration
   template: src={{ templates_dir }}/www.conf.j2 dest=/etc/php/7.0/fpm/pool.d/www.conf
 
-#- name: remove default vhost
-#  file: dest={{ sites_enabled }}/default state=absent
-#  when: nginx_remove_default
+- name: add nuage configuration
+  template: src={{ templates_dir }}/vhost.j2 dest={{ sites_available }}/000-site.conf
+
+- name: remove default vhost
+  file: dest={{ sites_enabled }}/default state=absent
+  when: nginx_remove_default
+
+- name: enable nuage
+  file: src={{ sites_available }}/000-site.conf dest={{ sites_enabled }}/000-site.conf state=link
 
 - name: restart nginx
   service: name=nginx state=restarted

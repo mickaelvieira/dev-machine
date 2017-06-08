@@ -1,5 +1,5 @@
 ---
-nginx_remove_default: false
+nginx_remove_default: true
 nginx_user: www-data
 nginx_sendfile: "off"
 
