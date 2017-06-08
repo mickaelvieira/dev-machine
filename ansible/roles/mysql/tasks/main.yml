@@ -1,0 +1,9 @@
+---
+- name: install mysql
+  apt: name=mysql-server state=present
+
+- name: install python mysql
+  apt: pkg=python-mysqldb state=installed
+
+- name: create MySQL user vagrant
+  mysql_user: name=vagrant password=vagrant priv=*.*:ALL state=present

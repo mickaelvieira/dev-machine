@@ -1,0 +1,12 @@
+---
+- name: install mycli
+  apt: name=mycli state=present
+
+- name: install shellcheck
+  apt: name=shellcheck state=present
+
+- name: install jq
+  apt: name=jq state=present
+
+- name: install autojump
+  apt: name=autojump state=present

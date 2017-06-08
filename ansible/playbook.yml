@@ -11,7 +11,9 @@
     - composer
     - nginx
     - apache
-    - mariadb
+    # - mariadb
+    - mysql
     - ruby
     - nodejs
     - dotfiles
+    - tools
