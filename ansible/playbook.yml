@@ -9,8 +9,8 @@
     - ssl
     - php
     - composer
-    - nginx
     - apache
+    - nginx
     # - mariadb
     - mysql
     - ruby

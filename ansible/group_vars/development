@@ -10,3 +10,6 @@ vagrant_db_user: vagrant
 vagrant_db_pwd: vagrant
 
 server_root: /srv
+
+host_name: mautic.local
+document_root: /srv/mautic

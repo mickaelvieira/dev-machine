@@ -29,43 +29,109 @@ server {
     error_log /var/log/nginx/error.log;
     access_log /var/log/nginx/access.log;
 
-    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-        access_log     off;
-        log_not_found  off;
-        expires        off;
-    }
+    # redirect index.php to root
+    rewrite ^/index.php/(.*) /$1  permanent;
 
-    location ~ /\. {
-        access_log     off;
-        log_not_found  off;
-        deny           all;
-    }
+    #######################################
+    ##  Start Mautic Specific config #####
+    #######################################
+
+    # redirect some entire folders
+    rewrite ^/(vendor|translations|build)/.* /index.php break;
 
     location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to index.html
+        # one option: try_files $uri $uri/ /index.php$is_args$args;
         try_files $uri /index.php$is_args$args;
+        # Uncomment to enable naxsi on this location
+        # include /etc/nginx/naxsi.rules
     }
 
-    location ~ ^/index\.php(/|$) {
-
-        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
-
-        fastcgi_split_path_info  ^(.+\.php)(/.+)$;
-
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param DOCUMENT_ROOT $realpath_root;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_param HTTPS on;
-
-        # fastcgi_buffer_size 128k;
-        # fastcgi_buffers 256 16k;
-        # fastcgi_busy_buffers_size 256k;
-        # fastcgi_temp_file_write_size 256k;
-
-        internal;
+    # Deny everything else in /app folder except Assets folder in bundles
+    location ~ /app/bundles/.*/Assets/ {
+        allow all;
+        access_log off;
     }
+    location ~ /app/ {
+        deny all;
+    }
+
+    # Deny everything else in /addons or /plugins folder except Assets folder in bundles
+    location ~ /(addons|plugins)/.*/Assets/ {
+        allow all;
+        access_log off;
+    }
+
+    location ~ /(addons|plugins)/ {
+        deny all;
+    }
+
+    # Deny all php files in themes folder
+    location ~* ^/themes/(.*)\.php {
+        deny all;
+    }
+
+    # Don't log favicon
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    # Don't log robots
+    location = /robots.txt  {
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny yml, twig, markdown, init file access
+    location ~* /(.*)\.(?:markdown|md|twig|yaml|yml|ht|htaccess|ini)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny all attempts to access hidden files/folders such as .htaccess, .htpasswd, .DS_Store (Mac), etc...
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny all grunt, composer files
+    location ~* (Gruntfile|package|composer)\.(js|json)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        access_log off;
+        log_not_found off;
+        expires off;
+    }
+
+    #######################################
+    ##  End Mautic Specific config #####
+    #######################################
 
     location ~ \.php$ {
-        return 404;
+        # try_files $uri =403;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+
+        # NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 16k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
     }
+
+    # location ~ \.php$ {
+    #    return 404;
+    #}
 }
